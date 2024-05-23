@@ -299,6 +299,7 @@
             CloseButton.TabIndex = 50;
             CloseButton.Text = "Close";
             CloseButton.UseVisualStyleBackColor = true;
+            CloseButton.Click += CloseButton_Click;
             // 
             // UserNameText
             // 
