@@ -42,6 +42,8 @@
             label6 = new Label();
             UnAssignButton = new Button();
             label7 = new Label();
+            Refresh = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)AvailableTicketsGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AssignedTicketGridView).BeginInit();
             SuspendLayout();
@@ -51,7 +53,7 @@
             AvailableTicketsGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             AvailableTicketsGridView.Location = new Point(12, 41);
             AvailableTicketsGridView.Name = "AvailableTicketsGridView";
-            AvailableTicketsGridView.Size = new Size(240, 138);
+            AvailableTicketsGridView.Size = new Size(651, 138);
             AvailableTicketsGridView.TabIndex = 0;
             // 
             // ChangeStatusButton
@@ -77,7 +79,7 @@
             AssignedTicketGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             AssignedTicketGridView.Location = new Point(12, 230);
             AssignedTicketGridView.Name = "AssignedTicketGridView";
-            AssignedTicketGridView.Size = new Size(240, 150);
+            AssignedTicketGridView.Size = new Size(651, 150);
             AssignedTicketGridView.TabIndex = 3;
             // 
             // label1
@@ -100,7 +102,7 @@
             // 
             // EnterTicketButton
             // 
-            EnterTicketButton.Location = new Point(258, 230);
+            EnterTicketButton.Location = new Point(703, 231);
             EnterTicketButton.Name = "EnterTicketButton";
             EnterTicketButton.Size = new Size(75, 23);
             EnterTicketButton.TabIndex = 6;
@@ -111,7 +113,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(258, 203);
+            label3.Location = new Point(703, 204);
             label3.Name = "label3";
             label3.Size = new Size(68, 15);
             label3.TabIndex = 7;
@@ -121,7 +123,7 @@
             // 
             label4.AutoSize = true;
             label4.ForeColor = Color.Red;
-            label4.Location = new Point(340, 234);
+            label4.Location = new Point(785, 235);
             label4.Name = "label4";
             label4.Size = new Size(107, 15);
             label4.TabIndex = 8;
@@ -138,7 +140,7 @@
             // 
             // AcceptTicketButton
             // 
-            AcceptTicketButton.Location = new Point(258, 41);
+            AcceptTicketButton.Location = new Point(703, 42);
             AcceptTicketButton.Name = "AcceptTicketButton";
             AcceptTicketButton.Size = new Size(75, 23);
             AcceptTicketButton.TabIndex = 10;
@@ -149,7 +151,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(258, 23);
+            label6.Location = new Point(703, 24);
             label6.Name = "label6";
             label6.Size = new Size(64, 15);
             label6.TabIndex = 11;
@@ -157,7 +159,7 @@
             // 
             // UnAssignButton
             // 
-            UnAssignButton.Location = new Point(258, 294);
+            UnAssignButton.Location = new Point(703, 295);
             UnAssignButton.Name = "UnAssignButton";
             UnAssignButton.Size = new Size(75, 23);
             UnAssignButton.TabIndex = 12;
@@ -168,17 +170,39 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(258, 276);
+            label7.Location = new Point(703, 277);
             label7.Name = "label7";
             label7.Size = new Size(91, 15);
             label7.TabIndex = 13;
             label7.Text = "UnAssign Ticket";
             // 
+            // Refresh
+            // 
+            Refresh.Location = new Point(703, 157);
+            Refresh.Name = "Refresh";
+            Refresh.Size = new Size(75, 23);
+            Refresh.TabIndex = 14;
+            Refresh.Text = "Refresh All";
+            Refresh.UseVisualStyleBackColor = true;
+            Refresh.Click += Refresh_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(817, 416);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 15;
+            button1.Text = "Logout";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Consultant
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(459, 450);
+            ClientSize = new Size(918, 450);
+            Controls.Add(button1);
+            Controls.Add(Refresh);
             Controls.Add(label7);
             Controls.Add(UnAssignButton);
             Controls.Add(label6);
@@ -195,6 +219,7 @@
             Controls.Add(AvailableTicketsGridView);
             Name = "Consultant";
             Text = "Consultant";
+            FormClosing += Consultant_FormClosing;
             Load += Consultant_Load;
             ((System.ComponentModel.ISupportInitialize)AvailableTicketsGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)AssignedTicketGridView).EndInit();
@@ -218,5 +243,7 @@
         private Label label6;
         private Button UnAssignButton;
         private Label label7;
+        private Button Refresh;
+        private Button button1;
     }
 }

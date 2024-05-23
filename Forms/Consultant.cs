@@ -18,6 +18,10 @@ namespace MobilusOperatorius.Forms
         {
             InitializeComponent();
             _loginform = loginform;
+            getSupportTicketStatus();
+            GetAvailableTickets();
+            GetAssignedTickets();
+
         }
         Dictionary<string, string> TicketStatus = new Dictionary<string, string>();
         private void EnterTicketButton_Click(object sender, EventArgs e)
@@ -34,7 +38,7 @@ namespace MobilusOperatorius.Forms
             string TicketStatusName = null;
             string TicketStatusID = null;
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "SELECT * FROM 'supportticketstatus';";
+            string query = "SELECT * FROM `supportticketstatus`;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             using (MySql.Data.MySqlClient.MySqlDataReader reader = sQL.DataReader(query, parameters))
             {
@@ -54,20 +58,40 @@ namespace MobilusOperatorius.Forms
         private void GetAvailableTickets()
         {
             DataTable dt = new DataTable();
+            dt.Columns.Add("TicketID");
+            dt.Columns.Add("Subject");
+            dt.Columns.Add("Description");
+            dt.Columns.Add("StatusID");
+            dt.Columns.Add("Status");
+            
+            dt.Columns.Add("CreatedDate");
+           
+            dt.Columns.Add("CustomerID");
+            dt.Columns.Add("EmployeeID");
+
+            
+
+
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "SELECT * FROM 'supportticketassigned'  WHERE 'EmployeeID' = '0';";
+            string query = "SELECT * FROM `supportticketassignment` LEFT JOIN `supportticket` ON `supportticketassignment`.`TicketID` = `supportticket`.`TicketID`";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
+            
+
             using (MySql.Data.MySqlClient.MySqlDataReader reader = sQL.DataReader(query, parameters))
             {
-                dt.Load(reader);
-                AvailableTicketsGridView.DataSource = dt;
+              
+                while(reader.Read())
+                {
+                    dt.Rows.Add(reader.GetInt32("TicketID").ToString(), reader.GetString("Subject"), reader.GetString("Description"), reader.GetInt32("StatusID").ToString(), TicketStatus.FirstOrDefault(x => x.Key == reader.GetInt32("StatusID").ToString()).Value, reader.GetDateTime("CreatedDate").ToString(), reader.GetInt32("CustomerID").ToString());
+                }
             }
+            AvailableTicketsGridView.DataSource = dt;
         }
         private void GetAssignedTickets()
         {
             DataTable dt = new DataTable();
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "SELECT * FROM 'supportticketassigned'  WHERE 'EmployeeID' = '@EmployeeID';";
+            string query = "SELECT * FROM `supportticketassignment` LEFT JOIN `supportticket` ON `supportticketassignment`.`TicketID` = `supportticket`.`TicketID`  WHERE `EmployeeID` = @EmployeeID;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("@EmployeeID", _loginform._EmployeeID);
             using (MySql.Data.MySqlClient.MySqlDataReader reader = sQL.DataReader(query, parameters))
@@ -94,7 +118,7 @@ namespace MobilusOperatorius.Forms
         private void AcceptTicket()
         {
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "UPDATE 'supportticketassigned' SET 'EmployeeID' = '@EmployeeID' WHERE 'TicketID' = '@TicketID';";
+            string query = "UPDATE `supportticketassignment` SET `EmployeeID` = @EmployeeID WHERE `TicketID` = @TicketID;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("@EmployeeID", _loginform._EmployeeID);
             parameters.Add("@TicketID", AvailableTicketsGridView.SelectedRows[0].Cells[0].Value.ToString());
@@ -118,9 +142,10 @@ namespace MobilusOperatorius.Forms
         private void UnAssignTicket()
         {
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "UPDATE 'supportticketassigned' SET 'EmployeeID' = '0' WHERE 'TicketID' = '@TicketID';";
+            string query = "UPDATE `supportticketassignment` SET `EmployeeID` = @EmployeeID WHERE `TicketID` = @TicketID;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("@TicketID", AssignedTicketGridView.SelectedRows[0].Cells[0].Value.ToString());
+            parameters.Add("@TicketID", AssignedTicketGridView.SelectedRows[0].Cells["TicketID"].Value.ToString());
+            parameters.Add("@EmployeeID", null);
             sQL.ExecuteNonQueries(query, parameters);
         }
 
@@ -141,11 +166,30 @@ namespace MobilusOperatorius.Forms
         private void ChangeSelectedTicketStatus()
         {
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "UPDATE 'supportticketassigned' SET 'StatusID' = '@StatusID' WHERE 'TicketID' = '@TicketID';";
+            string TicketStatusID = TicketStatus.FirstOrDefault(x => x.Value == TicketStatusComboBox.SelectedItem.ToString()).Key;
+            
+            string query = "UPDATE `supportticket` SET `StatusID` = @StatusID WHERE `TicketID` = @TicketID;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("@StatusID", TicketStatus.FirstOrDefault(x => x.Value == TicketStatusComboBox.SelectedItem.ToString()).Key);
+            parameters.Add("@StatusID", TicketStatusID);
             parameters.Add("@TicketID", AssignedTicketGridView.SelectedRows[0].Cells[0].Value.ToString());
             sQL.ExecuteNonQueries(query, parameters);
+        }
+
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            GetAvailableTickets();
+            GetAssignedTickets();
+        }
+
+        private void Consultant_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _loginform.Show();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            _loginform.Show();
+            this.Close();
         }
     }
 }
