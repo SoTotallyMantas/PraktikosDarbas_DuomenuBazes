@@ -217,7 +217,15 @@ namespace MobilusOperatorius.Forms
         private void CheckSubscriptionButton_Click(object sender, EventArgs e)
         {
             Subscription subscription = new Subscription(_loginform);
-            subscription.Show();
+            try
+            {
+                subscription.Show();
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            
         }
 
         private void LogoutButton_Click(object sender, EventArgs e)

@@ -106,24 +106,25 @@ namespace MobilusOperatorius.Forms
         }
         private void loadsubscriptions()
         {
+            string CustomerID = getCustomerID();    
 
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "SELECT * FROM `subscription` WHERE `CustomerID` = CustomerID;";
+            string query = "SELECT * FROM `subscription` WHERE `CustomerID` = @CustomerID;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("@CustomerID", getCustomerID());
+            parameters.Add("@CustomerID", CustomerID);
             using (MySql.Data.MySqlClient.MySqlDataReader reader = sQL.DataReader(query, parameters))
             {
                 while (reader.Read())
                 {
                     SubscriptionID = reader.GetInt32("SubscriptionID").ToString();
-                    StartDate = reader.GetString("StartDate");
-                    EndDate = reader.GetString("EndDate");
+                    StartDate = reader.GetDateTime("StartDate").ToString();
+                    EndDate = reader.GetDateTime("EndDate").ToString();
                     SubscriptionStatusID = reader.GetInt32("SubscriptionStatusID").ToString();
                     PaymentMethod = reader.GetInt32("PaymentMethodID").ToString();
-
-
                 }
             }
+            
+            
 
         }
         private void subscriptionStatus()

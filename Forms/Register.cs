@@ -23,7 +23,7 @@ namespace MobilusOperatorius.Forms
 
         private void RegisterButton_Click(object sender, EventArgs e)
         {
-            
+            IsTextBoxEmpty();
             AddUser();
             AddCustomer();
             AddAddress();
@@ -54,11 +54,11 @@ namespace MobilusOperatorius.Forms
         private void AddUser()
         {
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "INSERT INTO users (Username, Password, UserType) VALUES (@UserName,@Password,@UserType);";
+            string query = "INSERT INTO user (Username, Password, UserTypeID) VALUES (@UserName,@Password,@UserTypeID);";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("@UserName", UsernameTextBox.Text);
             parameters.Add("@Password", PasswordTextBox.Text);
-            parameters.Add("@UserType", "1");
+            parameters.Add("@UserTypeID", "1");
             sQL.ExecuteNonQueries(query, parameters);
 
         }
@@ -66,7 +66,7 @@ namespace MobilusOperatorius.Forms
         {
             string CustomerID = null;
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "SELECT * FROM 'customer' INNER Join 'user' ON 'customer'.'UserID' = 'user'.'UserID' WHERE 'Username' = '@Username';";
+            string query = "SELECT * FROM `customer` INNER Join `user` ON `customer`.`UserID` =  `user`.`UserID` WHERE  `Username` = @Username;";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("@Username", UsernameTextBox.Text);
             using (MySql.Data.MySqlClient.MySqlDataReader reader = sQL.DataReader(query, parameters))
@@ -78,15 +78,32 @@ namespace MobilusOperatorius.Forms
             }
             return CustomerID;
         }
+        private string getUserID()
+        {
+            string UserID = null;
+            SQL sQL = new SQL(Form1.DataBaseType);
+            string query = "SELECT * FROM `user` WHERE `Username` = @Username;";
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("@Username", UsernameTextBox.Text);
+            using (MySql.Data.MySqlClient.MySqlDataReader reader = sQL.DataReader(query, parameters))
+            {
+                while (reader.Read())
+                {
+                    UserID= reader.GetInt32("UserID").ToString();
+                }
+            }
+            return UserID;
+        }
         private void AddCustomer()
         {
             SQL sQL = new SQL(Form1.DataBaseType);
-            string query = "INSERT INTO customer (FirstName, LastName, Email, PhoneNumber) VALUES (@FirstName,@LastName,@Email,@PhoneNumber;";
+            string query = "INSERT INTO customer (FirstName, LastName, Email, PhoneNumber,UserID) VALUES (@FirstName,@LastName,@Email,@PhoneNumber,@UserID);";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("@FirstName", FirstNameTextBox.Text);
             parameters.Add("@LastName", LastNameTextBox.Text);
             parameters.Add("@Email", EmailTextBox.Text);
             parameters.Add("@PhoneNumber", PhoneNumberTextBox.Text);
+            parameters.Add("@UserID", getUserID());
 
             sQL.ExecuteNonQueries(query, parameters);
         }
@@ -98,6 +115,7 @@ namespace MobilusOperatorius.Forms
             parameters.Add("@City", CityTextBox.Text);
             parameters.Add("@Street", StreetAddressTextBox.Text);
             parameters.Add("@Country", CountryTextBox.Text);
+            parameters.Add("@Postalcode", PostalCodeTextBox.Text);
             parameters.Add("CustomerID", getCustomerID());
             sQL.ExecuteNonQueries(query, parameters);
         }
